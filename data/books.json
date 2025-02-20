@@ -1,0 +1,16 @@
+{
+    "books": [
+        {
+            "id": "B001",
+            "judul": "Laskar Pelangi",
+            "penulis": "Andrea Hirata",
+            "tersedia": true
+        },
+        {
+            "id": "B002",
+            "judul": "Harry Potter and The Philosopher Stone",
+            "penulis": "JK Rowling",
+            "tersedia": true
+        }
+    ]
+}
