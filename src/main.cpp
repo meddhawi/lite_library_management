@@ -1,27 +1,70 @@
 #include <iostream>
 #include <iomanip>
+#include <cstdlib>
 #include "book.h"
 #include "data_handler.h"
 
+const int WIDTH = 50;  // Add this at the top with other global declarations
+
+// Utility functions for UI
+void clearScreen() {
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
+}
+
+void printLine(char symbol, int width) {
+    cout << '+' << string(width, symbol) << '+' << endl;
+}
+
+void printCenter(const string& text, int width) {
+    int padding = (width - text.length()) / 2;
+    cout << '|' << string(padding, ' ') << text << string(width - padding - text.length(), ' ') << '|' << endl;
+}
+
+void printBox(const string& title, int width) {
+    printLine('=', width);
+    printCenter(title, width);
+    printLine('=', width);
+}
+
+void pauseScreen() {
+    cout << "\nTekan Enter untuk melanjutkan...";
+    cin.ignore();
+    cin.get();
+}
+
 void tampilkanMenu() {
-    cout << "\nSistem Manajemen Perpustakaan\n";
-    cout << "1. Tampilkan Daftar Buku\n";
-    cout << "2. Cari Buku\n";
-    cout << "3. Pinjam Buku\n";
-    cout << "4. Kembalikan Buku\n";
-    cout << "5. Tambah Buku Baru\n";
-    cout << "6. Update Status Buku\n";
-    cout << "7. Keluar\n";
-    cout << "Pilihan Anda: ";
+    clearScreen();
+    
+    printBox("SISTEM MANAJEMEN PERPUSTAKAAN", WIDTH);
+    cout << endl;
+    
+    printLine('-', WIDTH);
+    printCenter("MENU UTAMA", WIDTH);
+    printLine('-', WIDTH);
+    printCenter("1. Tampilkan Daftar Buku", WIDTH);
+    printCenter("2. Cari Buku", WIDTH);
+    printCenter("3. Pinjam Buku", WIDTH);
+    printCenter("4. Kembalikan Buku", WIDTH);
+    printCenter("5. Tambah Buku Baru", WIDTH);
+    printCenter("6. Update Status Buku", WIDTH);
+    printCenter("7. Keluar", WIDTH);
+    printLine('-', WIDTH);
+    cout << "\nPilihan Anda: ";
 }
 
 // Fungsi untuk menampilkan detail buku
-void tampilkanBuku(const Book& book) {
-    cout << "ID: " << book.getId() << endl
-         << "Judul: " << book.getJudul() << endl
-         << "Penulis: " << book.getPenulis() << endl
-         << "Status: " << (book.isTersedia() ? "Tersedia" : "Dipinjam") << endl
-         << "------------------------" << endl;
+void tampilkanBuku(const Book& book, int width) {
+    printLine('-', width);
+    cout << "| ID      : " << left << setw(width-12) << book.getId() << "|" << endl;
+    cout << "| Judul   : " << left << setw(width-12) << book.getJudul() << "|" << endl;
+    cout << "| Penulis : " << left << setw(width-12) << book.getPenulis() << "|" << endl;
+    cout << "| Status  : " << left << setw(width-12) 
+         << (book.isTersedia() ? "Tersedia" : "Dipinjam") << "|" << endl;
+    printLine('-', width);
 }
 
 // 1. Fungsi untuk menampilkan semua buku
@@ -34,7 +77,7 @@ void tampilkanDaftarBuku(const vector<Book>& books) {
     }
     
     for (const auto& book : books) {
-        tampilkanBuku(book);
+        tampilkanBuku(book, WIDTH);
     }
 }
 
@@ -49,7 +92,7 @@ void cariBuku(const vector<Book>& books) {
     for (const auto& book : books) {
         if (book.getJudul().find(keyword) != string::npos || 
             book.getPenulis().find(keyword) != string::npos) {
-            tampilkanBuku(book);
+            tampilkanBuku(book, WIDTH);
             ditemukan = true;
         }
     }
@@ -156,34 +199,60 @@ int main() {
     do {
         tampilkanMenu();
         cin >> pilihan;
+        clearScreen();
         
         switch(pilihan) {
-            case 1:
+            case 1: {
+                printBox("DAFTAR BUKU PERPUSTAKAAN", WIDTH);
                 tampilkanDaftarBuku(handler.getBooks());
+                pauseScreen();
                 break;
-            case 2:
+            }
+            case 2: {
+                printBox("PENCARIAN BUKU", WIDTH);
                 cariBuku(handler.getBooks());
+                pauseScreen();
                 break;
-            case 3:
+            }
+            case 3: {
+                printBox("PEMINJAMAN BUKU", WIDTH);
                 pinjamBuku(handler.getBooks());
+                pauseScreen();
                 break;
-            case 4:
+            }
+            case 4: {
+                printBox("PENGEMBALIAN BUKU", WIDTH);
                 kembalikanBuku(handler.getBooks());
+                pauseScreen();
                 break;
-            case 5:
+            }
+            case 5: {
+                printBox("TAMBAH BUKU BARU", WIDTH);
                 tambahBuku(handler.getBooks());
+                pauseScreen();
                 break;
-            case 6:
+            }
+            case 6: {
+                printBox("UPDATE STATUS BUKU", WIDTH);
                 updateStatusBuku(handler.getBooks());
+                pauseScreen();
                 break;
-            case 7:
-                cout << "Terima kasih telah menggunakan sistem perpustakaan.\n";
+            }
+            case 7: {
+                clearScreen();
+                printBox("TERIMA KASIH", WIDTH);
+                printCenter("Sampai jumpa kembali!", WIDTH);
+                printLine('=', WIDTH);
                 break;
-            default:
-                cout << "Pilihan tidak valid.\n";
+            }
+            default: {
+                printBox("ERROR", WIDTH);
+                printCenter("Pilihan tidak valid!", WIDTH);
+                printLine('=', WIDTH);
+                pauseScreen();
+            }
         }
         
-        // Simpan perubahan ke file setiap kali ada modifikasi data
         if (pilihan >= 3 && pilihan <= 6) {
             handler.saveData();
         }

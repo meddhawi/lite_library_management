@@ -11,6 +11,12 @@
             "judul": "Harry Potter and The Philosopher Stone",
             "penulis": "JK Rowling",
             "tersedia": true
+        },
+        {
+            "id": "B003",
+            "judul": "Business 101",
+            "penulis": "Leon Hartono",
+            "tersedia": true
         }
     ]
 }
